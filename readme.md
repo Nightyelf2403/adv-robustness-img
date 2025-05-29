@@ -1,93 +1,93 @@
 # 🔐 adv-robustness-img
 
-> **Evaluating Adversarial Robustness of Pretrained Image Classifiers**
+> **Evaluating Adversarial Robustness of Pretrained Image Classifiers on Bean Leaf Dataset**
 
-This project explores the adversarial robustness of pretrained deep learning models in image classification, using a variety of advanced attack techniques and a lightweight defense strategy.
+This project investigates how well pretrained deep learning image classifiers can withstand adversarial attacks. It benchmarks different attack methods—including black-box and white-box attacks—on a clean agricultural dataset of bean leaf images. The study also evaluates a lightweight defense strategy.
+
+---
 
 ## 📦 Dataset
 
-We use the **Bean Leaf Classification** dataset sourced from the [GitHub repository by @trizkynoviandy](https://github.com/trizkynoviandy/bean-leaf-classification), which contains annotated images of healthy and diseased bean leaves. It provides a clean and interpretable image classification task ideal for adversarial robustness evaluation.
-
-## 🧠 Models Used
-
-- `ResNet-18` (Pretrained on ImageNet)
-- `EfficientNet-B0` (Pretrained on ImageNet)
-
-Both models are fine-tuned on the bean leaf dataset and tested under various adversarial scenarios.
-
-## ⚔️ Adversarial Attacks
-
-We apply four advanced adversarial attacks to benchmark robustness:
-
-1. **Square Attack**  
-   A black-box, query-efficient attack based on pixel perturbations.
-
-2. **Elastic-Net Attack (EAD)**  
-   A white-box attack using L1 regularization to generate sparse perturbations.
-
-3. **ZOO Attack (Zeroth Order Optimization)** ✅ *(used instead of Spatial Transformation Attack)*  
-   A black-box optimization-based evasion attack requiring only output probabilities.
-
-4. **FGSM (Fast Gradient Sign Method)**  
-   Baseline white-box attack for comparison.
-
-## 🛡️ Defense Technique
-
-**Feature Squeezing**  
-A lightweight input preprocessing method that reduces color bit depth and applies smoothing to diminish adversarial noise while preserving key features.
-
-## 📊 Evaluation Metrics
-
-- **Top-1 Accuracy Drop**
-- **Attack Success Rate**
-- **Visual Perturbation (L2 Norm / L∞)**
-- **Robustness across attacks and models**
-
-## 🖼️ Visualizations
-
-Visual comparisons are provided between:
-- Clean images
-- Adversarial examples
-- Defended outputs (Feature Squeezed)
-
-See the `notebooks/` directory and generated plots for side-by-side visuals.
-
-
-## 🚀 How to Run
-
-```bash
-# Clone the repo
-git clone https://github.com/<your-username>/adv-robustness-img.git
-cd adv-robustness-img
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run attack evaluations
-python attacks/zoo_attack.py
-
-# Launch Jupyter Notebook to view results
-jupyter notebook notebooks/evaluation.ipynb
-````
-
-## 📌 Notes
-
-* The **ZOO Attack** is used in place of the Spatial Transformation Attack to provide diversity and test black-box vulnerabilities more effectively.
-* The dataset can be downloaded from the linked GitHub repo or directly placed in the `data/` folder.
-
-## 🧪 Results Summary
-
-| Model           | Attack | Accuracy ↓ | Perturbation Norm |
-| --------------- | ------ | ---------- | ----------------- |
-| ResNet-18       | ZOO    | 32.4%      | \~1.7 (L2 norm)   |
-| EfficientNet-B0 | EAD    | 28.1%      | \~1.2 (L1 norm)   |
-
-(See full results and plots in `notebooks/`)
-
-## 📚 References
-
-* [ZOO Attack Paper](https://arxiv.org/abs/1708.03999)
-* [Feature Squeezing Defense](https://arxiv.org/abs/1704.01155)
-* [Bean Leaf Dataset Repo](https://github.com/trizkynoviandy/bean-leaf-classification)
+We use the **Bean Leaf Classification** dataset, originally from [@trizkynoviandy](https://github.com/trizkynoviandy/bean-leaf-classification), containing categorized images of bean plant leaves (healthy, angular leaf spot, and bean rust). The dataset is loaded and used from Google Drive within a Colab notebook.
 
 ---
+
+## 🧠 Models
+
+- `ResNet-18` (Keras, pretrained on ImageNet)
+- `EfficientNet-B0` (Keras, pretrained on ImageNet)
+
+These models were fine-tuned on the bean leaf dataset using TensorFlow/Keras and later evaluated under adversarial scenarios.
+
+---
+
+## ⚔️ Adversarial Attacks (ART Library)
+
+Adversarial attacks are implemented using the [Adversarial Robustness Toolbox (ART)](https://github.com/Trusted-AI/adversarial-robustness-toolbox) by IBM. The following attacks were tested:
+
+1. **FGSM (Fast Gradient Sign Method)** — A baseline white-box gradient-based attack.
+2. **Square Attack** — A black-box, query-efficient pixel-level perturbation.
+3. **Elastic-Net Attack (EAD)** — A white-box attack using L1-based sparse perturbations.
+4. **ZOO Attack (Zeroth Order Optimization)** ✅ *(used instead of Spatial Transformation Attack)* — A black-box attack using gradient estimation with only access to model output probabilities.
+
+---
+
+## 🛡️ Defense Strategy
+
+**Feature Squeezing**  
+A simple yet effective defense that reduces the model's input complexity by reducing bit-depth or applying smoothing filters to mitigate the impact of adversarial noise.
+
+---
+
+## 📊 Evaluation
+
+Evaluation metrics include:
+
+- Accuracy drop on adversarial examples
+- Perturbation strength (L1, L2 norms)
+- Confusion matrix plots for clean vs adversarial samples
+- Visual inspection of perturbed vs. original images
+
+All visualizations are generated using `Matplotlib` and `Seaborn`.
+
+---
+
+## 🧪 Setup & Execution
+
+### ⚙️ Environment
+
+- Python 3.x (Google Colab recommended)
+- TensorFlow 2.x / Keras
+- IBM ART (Adversarial Robustness Toolbox)
+- Matplotlib, Seaborn, NumPy, Pandas
+
+### ▶️ Running the Notebook
+
+1. Open `Final_487 (2).ipynb` in Google Colab.
+2. Mount your Google Drive when prompted.
+3. Ensure your Drive contains:
+   - `train.zip`
+   - `validation.zip`
+   - `test.zip`
+
+4. Run all cells to train the model, generate adversarial examples, apply defenses, and visualize performance.
+
+---
+
+## ✅ Notable Decisions
+
+- 🔄 Replaced **Spatial Transformation Attack** with **ZOO Attack** to incorporate black-box testing and diversify attack vectors.
+- 🧠 Models are trained using TensorFlow/Keras rather than PyTorch.
+- 📁 Data is loaded directly from Google Drive ZIPs within Colab.
+
+---
+
+## 📌 References
+
+- [ZOO Attack Paper](https://arxiv.org/abs/1708.03999)
+- [Feature Squeezing Defense](https://arxiv.org/abs/1704.01155)
+- [Bean Leaf Dataset](https://github.com/trizkynoviandy/bean-leaf-classification)
+- [Adversarial Robustness Toolbox (ART)](https://github.com/Trusted-AI/adversarial-robustness-toolbox)
+
+---
+
